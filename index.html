@@ -5,35 +5,56 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>DJ Set Timer</title>
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
       background-color: #000;
       color: #fff;
       font-family: 'Courier New', Courier, monospace;
       text-align: center;
-      padding-top: 50px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
     }
+
     #timer {
-      font-size: 6rem;  /* Digital-style large font */
+      font-size: 10rem;  /* Adjust font size for large screen fill */
       margin-bottom: 20px;
       font-weight: bold;
       letter-spacing: 5px;
       background-color: #000;
       color: #fff;
-      padding: 10px;
+      padding: 20px;
       border: 5px solid #fff; /* White border for digital look */
       border-radius: 15px;
       display: inline-block;
     }
-    input {
-      font-size: 1.5rem;
-      padding: 5px;
-      margin: 10px 5px;
-      width: 80px;
-      text-align: center;
+
+    .controls {
+      margin-top: 30px;
     }
+
+    input {
+      font-size: 2rem;
+      padding: 10px;
+      margin: 10px;
+      width: 100px;
+      text-align: center;
+      background-color: #222;
+      border: 2px solid #fff;
+      color: #fff;
+    }
+
     button {
-      font-size: 1.2rem;
-      padding: 10px 20px;
+      font-size: 1.5rem;
+      padding: 15px 30px;
       margin: 10px;
       cursor: pointer;
       background-color: #00ffff;
@@ -41,75 +62,15 @@
       color: #000;
       border-radius: 8px;
     }
+
     button:hover {
       background-color: #00cccc;
     }
-  </style>
-</head>
-<body>
 
-  <h1>DJ On-Stage Timer</h1>
-
-  <!-- Set the timer -->
-  <div>
-    <label for="minutes">Minutes:</label>
-    <input type="number" id="minutes" min="0" value="00" /> 
-    <label for="seconds">Seconds:</label>
-    <input type="number" id="seconds" min="0" value="00" /> 
-  </div>
-
-  <div id="timer">00:00</div>
-
-  <button onclick="startTimer()">Start</button>
-  <button onclick="stopTimer()">Stop</button>
-  <button onclick="resetTimer()">Reset</button>
-
-  <script>
-    let timerInterval;
-    let timeRemaining;
-    let isRunning = false;
-
-    function startTimer() {
-      if (isRunning) return; // If timer is already running, do nothing.
-
-      const minutes = document.getElementById('minutes').value;
-      const seconds = document.getElementById('seconds').value;
-      
-      // Convert input time to milliseconds
-      timeRemaining = (parseInt(minutes) * 60 + parseInt(seconds)) * 1000;
-
-      timerInterval = setInterval(() => {
-        if (timeRemaining <= 0) {
-          clearInterval(timerInterval);
-          isRunning = false;
-          alert("Time's up!");
-          return;
-        }
-        
-        timeRemaining -= 1000; // Decrease by 1 second
-
-        // Convert time remaining to minutes and seconds
-        const mins = String(Math.floor(timeRemaining / 60000)).padStart(2, '0');
-        const secs = String(Math.floor((timeRemaining % 60000) / 1000)).padStart(2, '0');
-        
-        document.getElementById('timer').textContent = `${mins}:${secs}`;
-        isRunning = true;
-      }, 1000);
-    }
-
-    function stopTimer() {
-      clearInterval(timerInterval);
-      isRunning = false;
-    }
-
-    function resetTimer() {
-      clearInterval(timerInterval);
-      isRunning = false;
-      document.getElementById('minutes').value = '00';
-      document.getElementById('seconds').value = '00';
-      document.getElementById('timer').textContent = "00:00";
-    }
-  </script>
-
-</body>
-</html>
+    @media (max-width: 600px) {
+      #timer {
+        font-size: 8rem;  /* Scale down for smaller screens */
+      }
+      input {
+        font-size: 1.5rem;
+        width:
