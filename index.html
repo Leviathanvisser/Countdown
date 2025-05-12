@@ -25,7 +25,7 @@
     }
 
     #timer {
-      font-size: 80px;
+      font-size: 120px;
       letter-spacing: 4px;
       margin-bottom: 30px;
     }
@@ -64,7 +64,7 @@
 
     @media (max-width: 500px) {
       #timer {
-        font-size: 60px;
+        font-size: 80px;
       }
 
       button {
@@ -76,11 +76,67 @@
 </head>
 <body>
 
-  <div id="timer">00:00:00</div>
+  <div id="timer">00:00</div>
 
   <div class="controls">
     <input type="number" id="hours" placeholder="Hrs" min="0" />
     <input type="number" id="minutes" placeholder="Min" min="0" max="59" />
-    <input type="number" id="seconds" placeholder="Sec" min="0" max="59" />
     <button onclick="setTimer()">Set</button>
-    <
+    <button onclick="startTimer()">Start</button>
+    <button onclick="pauseTimer()">Pause</button>
+    <button onclick="resetTimer()">Reset</button>
+  </div>
+
+  <script>
+    let timerDisplay = document.getElementById("timer");
+    let hoursInput = document.getElementById("hours");
+    let minutesInput = document.getElementById("minutes");
+
+    let totalSeconds = 0;
+    let interval = null;
+
+    function updateDisplay() {
+      let hrs = Math.floor(totalSeconds / 3600);
+      let mins = Math.floor((totalSeconds % 3600) / 60);
+
+      timerDisplay.textContent =
+        String(hrs).padStart(2, "0") + ":" +
+        String(mins).padStart(2, "0");
+    }
+
+    function setTimer() {
+      let hrs = parseInt(hoursInput.value) || 0;
+      let mins = parseInt(minutesInput.value) || 0;
+
+      totalSeconds = hrs * 3600 + mins * 60;
+      updateDisplay();
+    }
+
+    function startTimer() {
+      if (interval) return;
+      interval = setInterval(() => {
+        if (totalSeconds <= 0) {
+          clearInterval(interval);
+          interval = null;
+          return;
+        }
+        totalSeconds--;
+        updateDisplay();
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      clearInterval(interval);
+      interval = null;
+    }
+
+    function resetTimer() {
+      pauseTimer();
+      totalSeconds = 0;
+      updateDisplay();
+    }
+
+    updateDisplay(); // Initialize timer display
+  </script>
+</body>
+</html>
