@@ -1,23 +1,123 @@
-const cacheName = "dj-timer-cache-v1";
-const assets = [
-  "index.html",
-  "manifest.json",
-  "icon-192.png",
-  "icon-512.png"
-];
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DJ Set Countdown Timer</title>
+  <link rel="manifest" href="manifest.json" />
+  <style>
+    body {
+      margin: 0;
+      background-color: #000;
+      color: #ccc;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
 
-self.addEventListener("install", (e) => {
-  e.waitUntil(
-    caches.open(cacheName).then((cache) => {
-      return cache.addAll(assets);
-    })
-  );
-});
+    #timer {
+      font-size: 120px;
+      letter-spacing: 4px;
+      margin-bottom: 30px;
+    }
 
-self.addEventListener("fetch", (e) => {
-  e.respondWith(
-    caches.match(e.request).then((response) => {
-      return response || fetch(e.request);
-    })
-  );
-});
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    button {
+      padding: 15px 25px;
+      font-size: 18px;
+      background-color: #222;
+      color: #ccc;
+      border: 2px solid #444;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    input[type="number"] {
+      width: 80px;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: none;
+      background-color: #111;
+      color: #ccc;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="timer">00:00</div>
+
+  <div class="controls">
+    <input type="number" id="hours" placeholder="Hrs" min="0" />
+    <input type="number" id="minutes" placeholder="Min" min="0" max="59" />
+    <button onclick="setTimer()">Set</button>
+    <button onclick="startTimer()">Start</button>
+    <button onclick="pauseTimer()">Pause</button>
+    <button onclick="resetTimer()">Reset</button>
+  </div>
+
+  <script>
+    let timerDisplay = document.getElementById("timer");
+    let hoursInput = document.getElementById("hours");
+    let minutesInput = document.getElementById("minutes");
+
+    let totalSeconds = 0;
+    let interval = null;
+
+    function updateDisplay() {
+      let hrs = Math.floor(totalSeconds / 3600);
+      let mins = Math.floor((totalSeconds % 3600) / 60);
+      timerDisplay.textContent = String(hrs).padStart(2, "0") + ":" + String(mins).padStart(2, "0");
+    }
+
+    function setTimer() {
+      pauseTimer();
+      let hrs = parseInt(hoursInput.value) || 0;
+      let mins = parseInt(minutesInput.value) || 0;
+      totalSeconds = hrs * 3600 + mins * 60;
+      updateDisplay();
+    }
+
+    function startTimer() {
+      if (interval !== null) return;
+      interval = setInterval(() => {
+        if (totalSeconds <= 0) {
+          pauseTimer();
+          return;
+        }
+        totalSeconds--;
+        updateDisplay();
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      if (interval !== null) {
+        clearInterval(interval);
+        interval = null;
+      }
+    }
+
+    function resetTimer() {
+      pauseTimer();
+      totalSeconds = 0;
+      updateDisplay();
+    }
+
+    updateDisplay();
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js');
+    }
+  </script>
+</body>
+</html>
